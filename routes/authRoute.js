@@ -5,7 +5,6 @@ const Admin = require('../models/Admin');
 
 const router = express.Router();
 
-// Rute Pendaftaran Akun Kasir Baru
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -18,11 +17,12 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({ message: "Account created successfully!" });
     } catch (err) {
-        res.status(500).json({ error: "Failed to register account." });
+        // INI ADALAH LOG PENDETEKSI ERRORNYA
+        console.error("🔥 ERROR ASLI DARI REGISTER:", err);
+        res.status(500).json({ error: "Failed to register account.", details: err.message });
     }
 });
 
-// Rute Login Kasir
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -32,12 +32,13 @@ router.post('/login', async (req, res) => {
         const validPassword = await bcrypt.compare(password, admin.password);
         if (!validPassword) return res.status(400).json({ error: "Invalid username or password" });
 
-        // Membuat Token Rahasia
         const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         
         res.header('Authorization', `Bearer ${token}`).json({ token, message: "Login successful!" });
     } catch (err) {
-        res.status(500).json({ error: "Server error during login." });
+        // INI ADALAH LOG PENDETEKSI ERRORNYA
+        console.error("🔥 ERROR ASLI DARI LOGIN:", err);
+        res.status(500).json({ error: "Server error during login.", details: err.message });
     }
 });
 

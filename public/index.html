@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Kopi Pogung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font serif untuk kesan kedai kopi klasik */
+        body { font-family: 'Georgia', serif; }
+        /* Kustomisasi scrollbar untuk dark mode */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300 min-h-screen">
+
+    <div id="auth-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-slate-800 border-t-4 border-orange-500 p-10 max-w-md w-full shadow-2xl">
+            <h1 class="text-4xl font-bold text-white mb-1 tracking-wider">KOPI POGUNG</h1>
+            <p class="text-slate-400 text-sm mb-8 tracking-widest uppercase" id="auth-subtitle">Terminal Kasir - Login</p>
+
+            <form id="auth-form" class="space-y-6">
+                <div>
+                    <input type="text" id="username" placeholder="ID Pengguna" class="w-full bg-slate-700 text-white px-4 py-3 border border-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition placeholder-slate-400" required>
+                </div>
+                <div>
+                    <input type="password" id="password" placeholder="Kata Sandi" class="w-full bg-slate-700 text-white px-4 py-3 border border-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition placeholder-slate-400" required>
+                </div>
+                <button type="submit" id="auth-btn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 uppercase tracking-wider transition">Akses Sistem</button>
+            </form>
+
+            <div class="mt-6 border-t border-slate-700 pt-4 text-center">
+                <button id="toggle-auth" class="text-xs text-slate-400 hover:text-white transition uppercase tracking-wider">» Buat Akses Kasir Baru «</button>
+            </div>
+            <div id="auth-message" class="mt-4 text-center text-sm font-bold"></div>
+        </div>
+    </div>
+
+    <div id="dashboard-section" class="hidden min-h-screen flex flex-col">
+        <nav class="bg-black border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
+                <h2 class="text-xl font-bold text-white tracking-widest">KASIR <span class="text-orange-500">POGUNG</span></h2>
+            </div>
+            <button id="logout-btn" class="text-slate-400 hover:text-red-500 text-sm uppercase tracking-wider transition border border-slate-700 px-4 py-1.5 hover:border-red-500">Tutup Sesi</button>
+        </nav>
+
+        <div class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+            
+            <div class="bg-slate-800 border border-slate-700 p-6 shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
+                <h3 class="text-orange-400 uppercase tracking-widest text-xs font-bold mb-4">» Entri Pesanan Baru</h3>
+                
+                <form id="order-form" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-500 mb-1 uppercase">Pelanggan</label>
+                        <input type="text" id="customerName" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 text-white outline-none focus:border-orange-500" required>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-500 mb-1 uppercase">Menu Kopi</label>
+                        <select id="coffeeMenu" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 text-white outline-none focus:border-orange-500" required>
+                            <option value="" disabled selected>-- Pilih --</option>
+                            <option value="Espresso">Espresso</option>
+                            <option value="Americano">Americano</option>
+                            <option value="Cafe Latte">Cafe Latte</option>
+                            <option value="Cappuccino">Cappuccino</option>
+                            <option value="Caramel Macchiato">Crml Macchiato</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-500 mb-1 uppercase">Qty</label>
+                        <input type="number" id="quantity" min="1" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 text-white outline-none focus:border-orange-500 text-center" required>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-500 mb-1 uppercase">Total (Rp)</label>
+                        <input type="number" id="totalPrice" class="w-full bg-black border border-slate-800 px-3 py-2 text-green-400 font-bold outline-none text-right cursor-not-allowed" readonly required>
+                    </div>
+                    <div class="md:col-span-1">
+                        <button type="submit" class="w-full bg-slate-700 hover:bg-orange-600 text-white px-4 py-2 uppercase tracking-wider text-sm transition border border-slate-600 hover:border-orange-500">Proses</button>
+                    </div>
+                </form>
+                <p id="order-message" class="mt-2 text-xs text-green-400 h-4"></p>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 shadow-lg overflow-hidden">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
+                    <h3 class="text-slate-400 uppercase tracking-widest text-xs font-bold">» Daftar Transaksi Hari Ini</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-500 text-xs uppercase tracking-widest border-b border-slate-700">
+                                <th class="p-4 font-normal">Nama</th>
+                                <th class="p-4 font-normal">Pesanan</th>
+                                <th class="p-4 font-normal text-right">Tagihan</th>
+                                <th class="p-4 font-normal text-center">Status</th>
+                                <th class="p-4 font-normal text-center">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="text-sm divide-y divide-slate-700">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "/api/v1";
+        let isLoginMode = true;
+
+        const authSection = document.getElementById('auth-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const authForm = document.getElementById('auth-form');
+        const orderForm = document.getElementById('order-form');
+        
+        if (localStorage.getItem('kasir_token')) showDashboard();
+
+        document.getElementById('toggle-auth').addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-btn').innerText = isLoginMode ? "Akses Sistem" : "Daftar Kasir";
+            document.getElementById('auth-subtitle').innerText = isLoginMode ? "Terminal Kasir - Login" : "Terminal Kasir - Registrasi";
+            document.getElementById('toggle-auth').innerText = isLoginMode ? "» Buat Akses Kasir Baru «" : "» Kembali ke Login «";
+            document.getElementById('auth-message').innerText = "";
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const endpoint = isLoginMode ? "/auth/login" : "/auth/register";
+
+            try {
+                const response = await fetch(API_URL + endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (isLoginMode) {
+                        localStorage.setItem('kasir_token', data.token);
+                        showDashboard();
+                    } else {
+                        document.getElementById('auth-message').innerText = "[ REGISTRASI BERHASIL ]";
+                        document.getElementById('auth-message').className = "mt-4 text-center text-sm font-bold text-green-500 tracking-wider";
+                    }
+                } else {
+                    document.getElementById('auth-message').innerText = "[ AKSES DITOLAK ]";
+                    document.getElementById('auth-message').className = "mt-4 text-center text-sm font-bold text-red-500 tracking-wider";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+
+        const prices = { "Espresso": 15000, "Americano": 18000, "Cafe Latte": 22000, "Cappuccino": 22000, "Caramel Macchiato": 25000 };
+        document.getElementById('coffeeMenu').addEventListener('change', calcPrice);
+        document.getElementById('quantity').addEventListener('input', calcPrice);
+        
+        function calcPrice() {
+            const menu = document.getElementById('coffeeMenu').value;
+            const qty = document.getElementById('quantity').value;
+            if(menu && qty) document.getElementById('totalPrice').value = prices[menu] * qty;
+        }
+
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('kasir_token');
+            const newOrder = {
+                customerName: document.getElementById('customerName').value,
+                coffeeMenu: document.getElementById('coffeeMenu').value,
+                quantity: document.getElementById('quantity').value,
+                totalPrice: document.getElementById('totalPrice').value
+            };
+
+            const response = await fetch(API_URL + "/orders", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(newOrder)
+            });
+
+            if (response.ok) {
+                document.getElementById('order-message').innerText = "Data Transaksi Berhasil Direkam.";
+                orderForm.reset();
+                fetchOrders();
+                setTimeout(() => document.getElementById('order-message').innerText = "", 3000);
+            }
+        });
+
+        async function fetchOrders() {
+            const token = localStorage.getItem('kasir_token');
+            const response = await fetch(API_URL + "/orders", {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = ""; 
+                
+                data.forEach(item => {
+                    const isPaid = item.paymentStatus === 'Paid';
+                    const statusBadge = isPaid 
+                        ? `<span class="border border-green-500/30 text-green-400 px-2 py-1 text-xs uppercase tracking-widest">Lunas</span>`
+                        : `<span class="border border-red-500/30 text-red-400 px-2 py-1 text-xs uppercase tracking-widest bg-red-500/10 animate-pulse">Tertunda</span>`;
+                    
+                    const actionBtn = isPaid 
+                        ? `<button onclick="deleteOrder('${item._id}')" class="text-slate-500 hover:text-red-500 text-xs uppercase tracking-widest">Hapus</button>`
+                        : `<button onclick="markAsPaid('${item._id}')" class="bg-orange-600/20 text-orange-400 hover:bg-orange-600 hover:text-white border border-orange-600/50 px-3 py-1 text-xs uppercase tracking-widest transition">Selesaikan</button>`;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-700/50 transition">
+                            <td class="p-4 text-white">${item.customerName}</td>
+                            <td class="p-4">${item.coffeeMenu} <span class="text-slate-500 text-xs ml-1">x${item.quantity}</span></td>
+                            <td class="p-4 text-right text-green-400 font-mono">Rp ${item.totalPrice.toLocaleString('id-ID')}</td>
+                            <td class="p-4 text-center">${statusBadge}</td>
+                            <td class="p-4 text-center">${actionBtn}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        async function markAsPaid(id) {
+            const token = localStorage.getItem('kasir_token');
+            await fetch(`${API_URL}/orders/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ paymentStatus: 'Paid' })
+            });
+            fetchOrders();
+        }
+
+        async function deleteOrder(id) {
+            if(!confirm('Hapus log transaksi ini secara permanen?')) return;
+            const token = localStorage.getItem('kasir_token');
+            await fetch(`${API_URL}/orders/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchOrders();
+        }
+
+        function showDashboard() {
+            authSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            fetchOrders();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('kasir_token');
+            dashboardSection.classList.add('hidden');
+            authSection.classList.remove('hidden');
+            document.getElementById('username').value = "";
+            document.getElementById('password').value = "";
+        });
+    </script>
+</body>
+</html>

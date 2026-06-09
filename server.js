@@ -12,22 +12,19 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Prefix API untuk rute kasir kopi
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/orders', orderRoute);
 
-// Monolithic UI
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Koneksi Database
+// Koneksi Database (Dioptimalkan untuk Lingkungan Serverless Vercel)
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000,
-    family: 4
+    socketTimeoutMS: 45000,
 }).then(() => {
     console.log('✅ MongoDB Connected for Coffee Shop System');
-    // Biarkan tetap bisa jalan di lokal laptop
     if (process.env.NODE_ENV !== 'production') {
         app.listen(PORT, () => {
             console.log(`🚀 Cashier Server running on port ${PORT}`);
@@ -35,5 +32,4 @@ mongoose.connect(process.env.MONGO_URI, {
     }
 }).catch(err => console.error('❌ Database connection error:', err));
 
-// BARIS SAKTI UNTUK VERCEL (Sangat Penting):
 module.exports = app;

@@ -27,7 +27,13 @@ mongoose.connect(process.env.MONGO_URI, {
     family: 4
 }).then(() => {
     console.log('✅ MongoDB Connected for Coffee Shop System');
-    app.listen(PORT, () => {
-        console.log(`🚀 Cashier Server running on port ${PORT}`);
-    });
+    // Biarkan tetap bisa jalan di lokal laptop
+    if (process.env.NODE_ENV !== 'production') {
+        app.listen(PORT, () => {
+            console.log(`🚀 Cashier Server running on port ${PORT}`);
+        });
+    }
 }).catch(err => console.error('❌ Database connection error:', err));
+
+// BARIS SAKTI UNTUK VERCEL (Sangat Penting):
+module.exports = app;
